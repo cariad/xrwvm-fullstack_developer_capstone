@@ -18,11 +18,11 @@ class CarModel(models.Model):
         ('WAGON', 'Wagon'),
     ]
 
-    dealer_id = models.IntegerField()
-    make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    dealer_id = models.IntegerField(null=True)
     name = models.CharField(max_length=100)
     type = models.CharField(max_length=10, choices=CAR_TYPES, default='SUV')
-    year = models.DateField()
+    year = models.IntegerField()
 
     def __str__(self):
-        return f"{self.make} {self.name}"
+        return f"{self.car_make} {self.name}"
