@@ -59,7 +59,7 @@ def registration(request):
         response["error"] = "Already registered"
         return JsonResponse(response)
 
-    except:
+    except Exception:
         pass
 
     logger.warning("Creating %s as a new user", username)
@@ -112,7 +112,6 @@ def get_dealer_reviews(request, dealer_id):
         reviews = get_request(endpoint)
         for review_detail in reviews:
             response = analyze_review_sentiments(review_detail["review"])
-            print(response)
             review_detail["sentiment"] = response["sentiment"]
         return JsonResponse({"status": 200, "reviews": reviews})
     else:
@@ -129,12 +128,17 @@ def get_dealer_details(request, dealer_id):
 
 
 def add_review(request):
-    if request.user.is_anonymous == False:
+    if not request.user.is_anonymous:
         data = json.loads(request.body)
         try:
-            response = post_review(data)
+            post_review(data)
             return JsonResponse({"status": 200})
-        except:
-            return JsonResponse({"status": 401, "message": "Error in posting review"})
+        except Exception:
+            return JsonResponse(
+                {
+                    "status": 401,
+                    "message": "Error in posting review",
+                }
+            )
     else:
         return JsonResponse({"status": 403, "message": "Unauthorized"})
